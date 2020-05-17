@@ -36,11 +36,11 @@ import java.nio.file.Path;
 /**
  * Heavily inspired by JUnit 4.12 TemporaryFolder but with less features.
  */
-@Todo(description = "don't expose java.io.File, tests usually want java.nio.file.Path")
 public class TemporaryFolder implements Extension, BeforeEachCallback, AfterEachCallback {
 
 	private File folder;
 
+	@Deprecated
 	public File toFile() {
 		return folder;
 	}
@@ -62,6 +62,7 @@ public class TemporaryFolder implements Extension, BeforeEachCallback, AfterEach
 		recursiveDelete(folder);
 	}
 
+	@Deprecated
 	public File newFile(File parent, String fileName) throws IOException {
 		File file = new File(parent, fileName);
 		if (!file.createNewFile()) {
@@ -70,18 +71,22 @@ public class TemporaryFolder implements Extension, BeforeEachCallback, AfterEach
 		return file;
 	}
 
+	@Deprecated
 	public File newFile(String fileName) throws IOException {
 		return newFile(folder, fileName);
 	}
 
+	@Deprecated
 	public File newFile() throws IOException {
 		return File.createTempFile("hosh", null, folder);
 	}
 
+	@Deprecated
 	public File newFolder(String folderName) throws IOException {
 		return newFolder(folder, folderName);
 	}
 
+	@Deprecated
 	public File newFolder(File parent, String folder) throws IOException {
 		File newFolder = new File(parent, folder);
 		if (!newFolder.mkdir()) {
@@ -90,6 +95,7 @@ public class TemporaryFolder implements Extension, BeforeEachCallback, AfterEach
 		return newFolder;
 	}
 
+	@Deprecated
 	public File newFolder() throws IOException {
 		return createTemporary(folder);
 	}
