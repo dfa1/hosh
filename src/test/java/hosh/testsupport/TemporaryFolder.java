@@ -31,7 +31,9 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * Heavily inspired by JUnit 4.12 TemporaryFolder but with less features.
@@ -60,6 +62,22 @@ public class TemporaryFolder implements Extension, BeforeEachCallback, AfterEach
 			throw new IllegalStateException("folder is still null?");
 		}
 		recursiveDelete(folder);
+	}
+
+	@Deprecated // rename to newFileWithContent + remove test.hosh hardcoded
+	public Path givenScript(String... lines) throws IOException {
+		Path scriptPath = newFile("test.hosh").toPath();
+		Files.write(scriptPath, List.of(lines));
+		return scriptPath;
+	}
+
+	@Deprecated // rename to newFiles
+	public Path givenFolder(String... filenames) throws IOException {
+		Path folder = newFolder("folder").toPath();
+		for (String filename : filenames) {
+			Files.write(folder.resolve(filename), List.of("some content"));
+		}
+		return folder;
 	}
 
 	@Deprecated

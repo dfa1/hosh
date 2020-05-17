@@ -62,11 +62,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.channels.OverlappingFileLockException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -439,12 +437,11 @@ public class FileSystemModuleTest {
 
 		@Test
 		public void nonEmptyFile() throws IOException {
-			File newFile = temporaryFolder.newFile("data.txt");
-			try (FileWriter writer = new FileWriter(newFile, StandardCharsets.UTF_8)) {
-				writer.write("a 1\n");
-				writer.write("b 2\n");
-			}
-			ExitStatus exitStatus = sut.run(List.of(newFile.getAbsolutePath()), in, out, err);
+			Path newFile = temporaryFolder.givenScript(
+				"a 1",
+				"b 2"
+			);
+			ExitStatus exitStatus = sut.run(List.of(newFile.getFileName().toString()), in, out, err);
 			assertThat(exitStatus).isSuccess();
 			then(in).shouldHaveNoInteractions();
 			then(out).should().send(Records.singleton(Keys.TEXT, Values.ofText("a 1")));
@@ -456,11 +453,8 @@ public class FileSystemModuleTest {
 		@Test
 		public void nonEmptyFileInCwd() throws IOException {
 			given(state.getCwd()).willReturn(temporaryFolder.toPath());
-			File newFile = temporaryFolder.newFile("data.txt");
-			try (FileWriter writer = new FileWriter(newFile, StandardCharsets.UTF_8)) {
-				writer.write("a 1\n");
-			}
-			ExitStatus exitStatus = sut.run(List.of(newFile.getName()), in, out, err);
+			Path newFile = temporaryFolder.givenScript("a 1");
+			ExitStatus exitStatus = sut.run(List.of(newFile.getFileName().toString()), in, out, err);
 			assertThat(exitStatus).isSuccess();
 			then(in).shouldHaveNoInteractions();
 			then(out).should().send(Records.singleton(Keys.TEXT, Values.ofText("a 1")));

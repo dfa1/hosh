@@ -41,7 +41,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -111,7 +110,7 @@ public class HoshIT {
 
 	@Test
 	public void scriptWithCdAndCwd() throws Exception {
-		Path scriptPath = givenScript(
+		Path scriptPath = temporaryFolder.givenScript(
 			"cd " + temporaryFolder.toPath().toAbsolutePath(),
 			"cwd"//
 		);
@@ -124,7 +123,7 @@ public class HoshIT {
 
 	@Test
 	public void scriptWithOsVar() throws Exception {
-		Path scriptPath = givenScript(
+		Path scriptPath = temporaryFolder.givenScript(
 			"echo ${OS_ENV_VARIABLE}"//
 		);
 		Process hosh = givenHoshProcess(Map.of("OS_ENV_VARIABLE", "hello world!"), scriptPath.toString());
@@ -136,7 +135,7 @@ public class HoshIT {
 
 	@Test
 	public void scriptWithMissingOsVar() throws Exception {
-		Path scriptPath = givenScript(
+		Path scriptPath = temporaryFolder.givenScript(
 			"echo ${OS_ENV_VARIABLE}"//
 		);
 		Process hosh = givenHoshProcess(Collections.emptyMap(), scriptPath.toString());
@@ -148,7 +147,7 @@ public class HoshIT {
 
 	@Test
 	public void scriptWithMissingOsVarWithFallback() throws Exception {
-		Path scriptPath = givenScript(
+		Path scriptPath = temporaryFolder.givenScript(
 			"echo ${OS_ENV_VARIABLE!fallback}"//
 		);
 		Process hosh = givenHoshProcess(Collections.emptyMap(), scriptPath.toString());
@@ -160,7 +159,7 @@ public class HoshIT {
 
 	@Test
 	public void scriptWithImplicitExit() throws Exception {
-		Path scriptPath = givenScript(
+		Path scriptPath = temporaryFolder.givenScript(
 			"echo hello"//
 		);
 		Process hosh = givenHoshProcess(scriptPath.toString());
@@ -172,7 +171,7 @@ public class HoshIT {
 
 	@Test
 	public void scriptWithExplicitExit() throws Exception {
-		Path scriptPath = givenScript(
+		Path scriptPath = temporaryFolder.givenScript(
 			"exit 1"//
 		);
 		Process hosh = givenHoshProcess(scriptPath.toString());
@@ -182,7 +181,7 @@ public class HoshIT {
 
 	@Test
 	public void scriptParsedThenExecuted() throws Exception {
-		Path scriptPath = givenScript(
+		Path scriptPath = temporaryFolder.givenScript(
 			"exit 0",
 			"AAAAB"//
 		);
@@ -195,7 +194,7 @@ public class HoshIT {
 
 	@Test
 	public void nonPipelineExternalCommand() throws Exception {
-		Path scriptPath = givenScript(
+		Path scriptPath = temporaryFolder.givenScript(
 			"git --version"//
 		);
 		Process hosh = givenHoshProcess(scriptPath.toString());
@@ -207,7 +206,7 @@ public class HoshIT {
 
 	@Test
 	public void pipelineWithInternalCommand() throws Exception {
-		Path scriptPath = givenScript(
+		Path scriptPath = temporaryFolder.givenScript(
 			"rand | take 1 | count"//
 		);
 		Process hosh = givenHoshProcess(scriptPath.toString());
@@ -219,7 +218,7 @@ public class HoshIT {
 
 	@Test
 	public void pipelineReadFromExternalCommand() throws Exception {
-		Path scriptPath = givenScript(
+		Path scriptPath = temporaryFolder.givenScript(
 			"git --version | take 1 | count"//
 		);
 		Process hosh = givenHoshProcess(scriptPath.toString());
@@ -231,7 +230,7 @@ public class HoshIT {
 
 	@Test
 	public void pipelineWriteToExternalCommand() throws Exception {
-		Path scriptPath = givenScript(
+		Path scriptPath = temporaryFolder.givenScript(
 			"cwd | git cat-file --batch" //
 		);
 		Process hosh = givenHoshProcess(scriptPath.toString());
@@ -245,7 +244,7 @@ public class HoshIT {
 	@Bug(description = "regression test", issue = "https://github.com/dfa1/hosh/issues/212")
 	@Test
 	public void pipelineWithMiddleExternalCommands() throws Exception {
-		Path scriptPath = givenScript(
+		Path scriptPath = temporaryFolder.givenScript(
 			"git tag | wc -l | wc -l" //
 		);
 		Process hosh = givenHoshProcess(scriptPath.toString());
@@ -267,8 +266,8 @@ public class HoshIT {
 
 	@Bug(description = "regression test", issue = "https://github.com/dfa1/hosh/issues/23")
 	@Test
-	public void pipelinesDontExpandVariables() throws Exception {
-		Path scriptPath = givenScript(
+	public void pipelinesDoNotExpandVariables() throws Exception {
+		Path scriptPath = temporaryFolder.givenScript(
 			"echo ${OS_ENV_VARIABLE} | take 1"//
 		);
 		Process hosh = givenHoshProcess(Map.of("OS_ENV_VARIABLE", "hello world!"), scriptPath.toString());
@@ -280,8 +279,8 @@ public class HoshIT {
 
 	@Bug(description = "regression test", issue = "https://github.com/dfa1/hosh/issues/23")
 	@Test
-	public void wrappersDontExpandVariables() throws Exception {
-		Path scriptPath = givenScript(
+	public void wrappersDoNotExpandVariables() throws Exception {
+		Path scriptPath = temporaryFolder.givenScript(
 			"withTime { echo ${OS_ENV_VARIABLE} } "//
 		);
 		Process hosh = givenHoshProcess(Map.of("OS_ENV_VARIABLE", "hello world!"), scriptPath.toString());
@@ -293,7 +292,7 @@ public class HoshIT {
 
 	@Test
 	public void errorInSimpleCommand() throws Exception {
-		Path scriptPath = givenScript(
+		Path scriptPath = temporaryFolder.givenScript(
 			"err"//
 		);
 		Process hosh = givenHoshProcess(scriptPath.toString());
@@ -305,7 +304,7 @@ public class HoshIT {
 
 	@Test
 	public void errorInProducer() throws Exception {
-		Path scriptPath = givenScript(
+		Path scriptPath = temporaryFolder.givenScript(
 			"err | ls"//
 		);
 		Process hosh = givenHoshProcess(scriptPath.toString());
@@ -317,7 +316,7 @@ public class HoshIT {
 
 	@Test
 	public void errorInConsumer() throws Exception {
-		Path scriptPath = givenScript(
+		Path scriptPath = temporaryFolder.givenScript(
 			"ls | err"//
 		);
 		Process hosh = givenHoshProcess(scriptPath.toString());
@@ -329,7 +328,7 @@ public class HoshIT {
 
 	@Test
 	public void consumerAndProducerBothInError() throws Exception {
-		Path scriptPath = givenScript(
+		Path scriptPath = temporaryFolder.givenScript(
 			"err | err"//
 		);
 		Process hosh = givenHoshProcess(scriptPath.toString());
@@ -341,7 +340,7 @@ public class HoshIT {
 
 	@Test
 	public void consumeInfiniteProducer() throws Exception {
-		Path scriptPath = givenScript(
+		Path scriptPath = temporaryFolder.givenScript(
 			"rand | take 100 | count"//
 		);
 		Process hosh = givenHoshProcess(scriptPath.toString());
@@ -353,7 +352,7 @@ public class HoshIT {
 
 	@Test
 	public void benchmark() throws Exception {
-		Path scriptPath = givenScript(
+		Path scriptPath = temporaryFolder.givenScript(
 			"benchmark 2 { rand | take 100 | count } "//
 		);
 		Process hosh = givenHoshProcess(scriptPath.toString());
@@ -365,7 +364,7 @@ public class HoshIT {
 
 	@Test
 	public void unknownCommandInScript() throws Exception {
-		Path scriptPath = givenScript(
+		Path scriptPath = temporaryFolder.givenScript(
 			"FOOBAR"//
 		);
 		Process hosh = givenHoshProcess(scriptPath.toString());
@@ -388,7 +387,7 @@ public class HoshIT {
 	@Bug(description = "regression test", issue = "https://github.com/dfa1/hosh/issues/71")
 	@Test
 	public void commandWrapperCapturesOutput() throws Exception {
-		Path scriptPath = givenScript(
+		Path scriptPath = temporaryFolder.givenScript(
 			"benchmark 1 { cwd } | schema"//
 		);
 		Process hosh = givenHoshProcess(scriptPath.toString());
@@ -400,7 +399,7 @@ public class HoshIT {
 
 	@Test
 	public void redirectOutputToVariable() throws Exception {
-		Path scriptPath = givenScript(
+		Path scriptPath = temporaryFolder.givenScript(
 			"echo 'world' | capture WHO", // this is WHO=$(echo 'world')
 			"echo hello ${WHO}"//
 		);
@@ -413,7 +412,7 @@ public class HoshIT {
 
 	@Test
 	public void comments() throws Exception {
-		Path scriptPath = givenScript(
+		Path scriptPath = temporaryFolder.givenScript(
 			"# echo 'hello'",
 			"# ls",
 			"exit 42"//
@@ -427,7 +426,7 @@ public class HoshIT {
 
 	@Test
 	public void sequence() throws Exception {
-		Path scriptPath = givenScript(
+		Path scriptPath = temporaryFolder.givenScript(
 			"echo a ; echo b"//
 		);
 		Process hosh = givenHoshProcess(scriptPath.toString());
@@ -441,7 +440,7 @@ public class HoshIT {
 	@Bug(issue = "https://github.com/dfa1/hosh/issues/53", description = "signal handling")
 	@Test
 	public void interruptBuiltInCommand() throws Exception {
-		Path scriptPath = givenScript("rand");
+		Path scriptPath = temporaryFolder.givenScript("rand");
 		Process hosh = givenHoshProcess(scriptPath.toString());
 		sendSigint(hosh);
 		int exitCode = hosh.waitFor();
@@ -452,7 +451,7 @@ public class HoshIT {
 	@Bug(issue = "https://github.com/dfa1/hosh/issues/53", description = "signal handling")
 	@Test
 	public void interruptExternalCommand() throws Exception {
-		Path scriptPath = givenScript("git cat-file --batch");
+		Path scriptPath = temporaryFolder.givenScript("git cat-file --batch");
 		Process hosh = givenHoshProcess(scriptPath.toString());
 		sendSigint(hosh);
 		int exitCode = hosh.waitFor();
@@ -463,7 +462,7 @@ public class HoshIT {
 	@Bug(issue = "https://github.com/dfa1/hosh/issues/53", description = "signal handling")
 	@Test
 	public void interruptPipeline() throws Exception {
-		Path scriptPath = givenScript("rand | count");
+		Path scriptPath = temporaryFolder.givenScript("rand | count");
 		Process hosh = givenHoshProcess(scriptPath.toString());
 		sendSigint(hosh);
 		int exitCode = hosh.waitFor();
@@ -474,7 +473,7 @@ public class HoshIT {
 	@Bug(issue = "https://github.com/dfa1/hosh/issues/53", description = "signal handling")
 	@Test
 	public void interruptCommandWrapperWithPipeline() throws Exception {
-		Path scriptPath = givenScript("benchmark 10000 { rand | take 10000 | count }");
+		Path scriptPath = temporaryFolder.givenScript("benchmark 10000 { rand | take 10000 | count }");
 		Process hosh = givenHoshProcess(scriptPath.toString());
 		sendSigint(hosh);
 		int exitCode = hosh.waitFor();
@@ -483,8 +482,8 @@ public class HoshIT {
 
 	@Test
 	public void lambdaAfterGlobExpansion() throws Exception {
-		Path path = givenFolder("A.class", "B.class", "C.java");
-		Path scriptPath = givenScript("walk " + path.toAbsolutePath() + " | glob '*.class' | { path -> rm ${path} }");
+		Path path = temporaryFolder.givenFolder("A.class", "B.class", "C.java");
+		Path scriptPath = temporaryFolder.givenScript("walk " + path.toAbsolutePath() + " | glob '*.class' | { path -> rm ${path} }");
 		Process hosh = givenHoshProcess(scriptPath.toString());
 		String output = consumeOutput(hosh);
 		int exitCode = hosh.waitFor();
@@ -550,20 +549,6 @@ public class HoshIT {
 	}
 
 	// simple test infrastructure
-	private Path givenScript(String... lines) throws IOException {
-		Path scriptPath = temporaryFolder.newFile("test.hosh").toPath();
-		Files.write(scriptPath, List.of(lines));
-		return scriptPath;
-	}
-
-	private Path givenFolder(String... filenames) throws IOException {
-		Path folder = temporaryFolder.newFolder("folder").toPath();
-		for (String filename : filenames) {
-			Files.write(folder.resolve(filename), List.of("some content"));
-		}
-		return folder;
-	}
-
 	private Process givenHoshProcess(String... args) throws IOException {
 		return givenHoshProcess(Map.of(Hosh.Environment.HOSH_HISTORY, "false"), args);
 	}
