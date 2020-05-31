@@ -49,6 +49,7 @@
 		<module>modules/filesystem</module>
 		<module>runtime</module>
 		<module>test-support</module>
+		<module>dist</module>
 	</modules>
 	<dependencies>
 		<dependency>
@@ -139,8 +140,8 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
 	<build>
-		<finalName>hosh</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
