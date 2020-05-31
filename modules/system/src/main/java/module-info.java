@@ -21,8 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import hosh.modules.system.SystemModule;
+import hosh.spi.Module;
+
 module hosh.modules.system {
 	requires hosh.spi;
 	requires java.logging;
 	requires jline.reader;
+
+	uses Module;
+	provides Module with SystemModule;
 }

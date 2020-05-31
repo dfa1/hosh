@@ -21,8 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+import hosh.modules.terminal.TerminalModule;
+import hosh.spi.Module;
+
 module hosh.modules.terminal {
 	requires hosh.spi;
 	requires java.logging;
 	requires jline.terminal;
+
+	uses Module;
+	provides Module with TerminalModule;
 }
