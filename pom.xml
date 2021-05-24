@@ -46,7 +46,7 @@
 		<version.junit>5.7.1</version.junit>
 		<version.assertj>3.19.0</version.assertj>
 		<version.mockito>3.10.0</version.mockito>
-		<version.equalsverifier>3.5.5</version.equalsverifier>
+		<version.equalsverifier>3.6.1</version.equalsverifier>
 		<version.archunit>0.18.0</version.archunit>
 		<version.quicktheories>0.26</version.quicktheories>
 		<version.slf4j>1.7.30</version.slf4j>
