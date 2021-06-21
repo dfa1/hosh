@@ -49,7 +49,7 @@
 		<version.equalsverifier>3.5.5</version.equalsverifier>
 		<version.archunit>0.18.0</version.archunit>
 		<version.quicktheories>0.26</version.quicktheories>
-		<version.slf4j>1.7.30</version.slf4j>
+		<version.slf4j>1.7.31</version.slf4j>
 	</properties>
 	<modules>
 		<module>test-support</module>
